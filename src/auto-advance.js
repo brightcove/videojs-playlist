@@ -1,4 +1,4 @@
-
+/* global document */
 /**
  * Validates a number of seconds to use as the auto-advance delay.
  *
@@ -72,7 +72,22 @@ const setup = (player, delay) => {
     player.playlist.autoadvance_.timeout = player.setTimeout(() => {
       reset(player);
       player.off('play', cancelOnPlay);
+
       player.playlist.next();
+      const n = player.playlist.nextIndex();
+
+      if (n >= 0) {
+        // determine source
+        const preloadlocation = player.playlist()[n].sources[0].src;
+        const preloadLink = document.createElement('link');
+
+        preloadLink.href = preloadlocation;
+        preloadLink.crossOrigin = 'anonymous';
+        preloadLink.rel = 'preload';
+        preloadLink.as = 'object';
+        document.head.appendChild(preloadLink);
+      }
+
     }, delay * 1000);
   };
 
